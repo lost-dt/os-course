@@ -5,21 +5,22 @@
 #include "Allocator.h"
 
 using namespace std;
-void fillBlock(void* start, int size, int filler){
-    for(int i=0; i < size; i++){
-        *((int*)start + 1) = filler;
+
+void fillBlock(void *start, int size, int filler) {
+    for (int i = 0; i < size; i++) {
+        *((int *) start + 1) = filler;
     }
 }
 
-int main(){
+int main() {
     cout << "test() started! \n";
     const int n = 2000;
     const int calls = 15;
     const int bSize = 50;
     Allocator al = Allocator(n);
-    void* curBlock;
-    void* mas[calls]; // has all user blocks
-    for(auto & ma : mas){
+    void *curBlock;
+    void *mas[calls]; // has all user blocks
+    for (auto &ma : mas) {
         curBlock = al.mem_alloc(bSize);
         ma = curBlock;
         fillBlock(curBlock, 50, 170); //170(dec) = 1010 1010(bin)
@@ -32,7 +33,7 @@ int main(){
     cout << "max 3th el to 30\n"; // good
     al.mem_realloc(mas[3], 30);
     al.mem_dump();
-    cout <<"max 3th el to 49\n";
+    cout << "max 3th el to 49\n";
     al.mem_realloc(mas[3], 49);
     al.mem_dump();
     cout << "free 2th and 4th els \n";
