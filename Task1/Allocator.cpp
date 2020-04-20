@@ -1,7 +1,3 @@
-//
-// Created by Dmytro Tsylyuryk on 20.04.2020.
-//
-
 #include <iostream>
 #include "Allocator.h"
 
@@ -9,7 +5,6 @@ using namespace std;
 
 Allocator::Allocator(const int n) {
     int *mas = new int[n + 1];
-    N = n;
     bSize = sizeof(BlockHeader) / sizeof(int);
     begin = (BlockHeader *) (&mas[0]);
 
@@ -378,29 +373,6 @@ void *Allocator::separateOnUseAndFree(BlockHeader *current, size_t size) {
 
 void *Allocator::getBlock(BlockHeader *h) {
     return (void *) (h + 1);
-}
-
-
-bool Allocator::checkDamage(int filler) {
-    BlockHeader *current = begin;
-    int count = 0;
-    while (true) {
-        if (isLast(current))
-            break;
-        void *start = getBlock(current);
-        for (unsigned int i = 0; i < current->size; i++) {
-            if (*((int *) start + i) != filler) {
-                count++;
-            }
-        }
-        current = nextBlockHeader(current);
-    }
-    if (count) {
-        cout << "damaged: " << endl;
-        return true;
-    } else {
-        return false;
-    }
 }
 
 void Allocator::mem_dump() {

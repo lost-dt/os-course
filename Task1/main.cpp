@@ -1,6 +1,3 @@
-//
-// Created by Dmytro Tsylyuryk on 19.04.2020.
-//
 #include <iostream>
 #include "Allocator.h"
 
@@ -13,17 +10,17 @@ void fillBlock(void *start, int size, int filler) {
 }
 
 int main() {
-    cout << "test() started! \n";
+    cout << "start!\n";
     const int n = 2000;
     const int calls = 15;
     const int bSize = 50;
     Allocator al = Allocator(n);
     void *curBlock;
-    void *mas[calls]; // has all user blocks
+    void *mas[calls];
     for (auto &ma : mas) {
         curBlock = al.mem_alloc(bSize);
         ma = curBlock;
-        fillBlock(curBlock, 50, 170); //170(dec) = 1010 1010(bin)
+        fillBlock(curBlock, 50, 170);
     }
     cout << "alloc 15 blocks (length = 50) \n";
     al.mem_dump();
@@ -46,6 +43,6 @@ int main() {
     cout << "min 2th el to 53 \n";
     al.mem_realloc(mas[2], 53);
     al.mem_dump();
-    cout << "test() finished! \n";
+    cout << "finished! \n";
     return 0;
 }
