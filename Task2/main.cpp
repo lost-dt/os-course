@@ -1,7 +1,3 @@
-//
-// Created by Dmytro Tsylyuryk on 20.04.2020.
-//
-
 #include <iostream>
 #include "Allocator.h"
 
@@ -13,12 +9,9 @@ int main() {
     int n = 300;
     Allocator al(size, ps);
     auto **addrArray = new size_t *[n];
-    cout << "---------test started--------" << endl;
+    cout << "start!" << endl;
     for (int i = 0; i < n; i++) {
         addrArray[i] = (size_t *) al.mem_alloc(rand());
-        if (addrArray[i] == nullptr) {
-            cout << "error!!!" << endl;
-        }
     }
     al.mem_dump();
     for (int i = 0; i < n / 3; i++) {
@@ -30,7 +23,7 @@ int main() {
         al.mem_free(addrArray[i]);
     }
     al.mem_dump();
-    cout << "--------test_finished-----------" << endl;
+    cout << "finish!" << endl;
     getchar();
     return 0;
 }

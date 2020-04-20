@@ -1,7 +1,3 @@
-//
-// Created by Dmytro Tsylyuryk on 20.04.2020.
-//
-
 #include <iostream>
 #include "Allocator.h"
 
@@ -10,7 +6,6 @@ using namespace std;
 Allocator::Allocator(const size_t n, const size_t ps) {
     pages = n / ps;
     size_t pds = sizeof(PageDescriptor) / sizeof(size_t);
-    cout << pds << endl;
 
     size_t spaseForPD = pds * pages;
 
@@ -39,14 +34,6 @@ Allocator::Allocator(const size_t n, const size_t ps) {
         lBlocks[i] = pages + 1;
     }
     initPages();
-    cout << begin << endl;
-    cout << pagesBegin << endl;
-    cout << size << endl;
-    cout << pageSize << endl;
-    cout << pages << endl;
-    cout << lBlocksLength << endl;
-    cout << pageDescriptors << endl;
-    cout << lBlocks << endl;
 }
 
 void *Allocator::mem_alloc(size_t s) {
@@ -105,11 +92,6 @@ size_t *Allocator::getFreeMBlock(size_t ps) {
     }
 }
 
-bool Allocator::freeLBlockIsLast(PageDescriptor pd) {
-    LBlockDescriptor *desc = pd.firstFree;
-    return desc->nextFreeBlock == 0;
-}
-
 size_t *Allocator::getFreeLBlock(size_t bs) {
     size_t numberOfPage = lBlocks[getIndex(bs)];
     size_t index;
@@ -142,7 +124,7 @@ size_t Allocator::createLBlockPage(size_t bs) {
             if (i == pages / bs - 1)
                 des->nextFreeBlock = 0;
         }
-        pd.firstFree = 0;
+        pd.firstFree = nullptr;
         pd.next = pages + 1;
         lBlocks[getIndex(bs)] = index;
     }
@@ -161,14 +143,6 @@ size_t Allocator::getFreePage() {
     PageDescriptor pd = pageDescriptors[firstFreePage];
     firstFreePage = pd.next;
     return pages + 1;
-}
-
-void Allocator::setAllFree(PageDescriptor pd) const {
-    size_t bs = pd.bsize;
-    size_t blocks = pageSize / bs;
-    for (int i = 0; i < blocks; i++) {
-
-    }
 }
 
 void Allocator::initPages() {
@@ -218,7 +192,7 @@ void Allocator::copyData(const size_t *from, size_t *to, size_t length) {
             to[i] = from[i];
         }
     } else {
-        for (int i = length - 1; i <= 0; i++) {
+        for (size_t i = length - 1; i <= 0; i++) {
             to[i] = from[i];
         }
     }
@@ -228,7 +202,6 @@ void Allocator::mem_free(void *addr) {
     size_t pageNumber = findPageByAddress((size_t *) addr);
     PageDescriptor pd = pageDescriptors[pageNumber];
     if (pd.state == 1) {
-        size_t block = findBlockByAddress((size_t *) addr, pd.bsize);
         if (pd.firstFree == nullptr) {
             pd.firstFree = (LBlockDescriptor *) (addr);
             pd.firstFree->nextFreeBlock = 0;
@@ -256,13 +229,6 @@ size_t Allocator::findPageByAddress(const size_t *addr) {
     return pageNumber;
 }
 
-size_t Allocator::findBlockByAddress(const size_t *addr, size_t bs) {
-    size_t shiftFromBegin = addr - pagesBegin;
-    size_t shiftFromPageBegin = shiftFromBegin % pageSize;
-    size_t number = shiftFromPageBegin / bs;
-    return number;
-}
-
 void Allocator::mem_dump() {
     cout << "begin: " << begin << endl;
     cout << "begin of pages: " << pagesBegin << endl;
@@ -273,7 +239,9 @@ void Allocator::mem_dump() {
     cout << "(state, size, next, firstFree)" << endl;
     for (int i = 0; i < pages; i++) {
         pd = pageDescriptors[i];
-        cout << "[" << i << "] " << pd.state << " " << pd.bsize << " "
-             << pd.next << " " << pd.firstFree << endl;
+        cout << "{" << i << "} "
+        << "-" << pd.bsize
+        << "-" << pd.next
+        << "-" << pd.firstFree << endl;
     }
 }
